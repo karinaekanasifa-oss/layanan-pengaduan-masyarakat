@@ -1,0 +1,31 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('cleanup_logs', function (Blueprint $table) {
+            $table->id('id_log');
+            $table->unsignedBigInteger('id_laporan');
+            $table->unsignedBigInteger('id_petugas');
+            $table->enum('status_perubahan', ['ditugaskan', 'sedang_dibersihkan', 'selesai']);
+            $table->string('foto_bukti', 255)->nullable(); // Disesuaikan ala simling (panjang 255)
+            $table->text('catatan_petugas')->nullable();
+            $table->timestamp('waktu_pembaruan')->useCurrent();
+            $table->timestamps();
+
+            // Foreign Keys
+            $table->foreign('id_laporan')->references('id_laporan')->on('waste_reports')->onDelete('cascade');
+            $table->foreign('id_petugas')->references('id_pengguna')->on('users')->onDelete('cascade');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('cleanup_logs');
+    }
+};
