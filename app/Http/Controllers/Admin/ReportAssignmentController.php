@@ -61,16 +61,17 @@ class ReportAssignmentController extends Controller
     // 4. Menampilkan daftar riwayat penugasan lapangan ke petugas
     public function indexPenugasan()
     {
-        $penugasan = ReportAssignment::with(['laporan.zona', 'petugas', 'admin'])->get();
-        return view('Admin.pages.penugasan.penugasan', compact('penugasan'));
+        // Diubah dari $penugasan menjadi $penugasans agar cocok dengan file Blade
+        $penugasans = ReportAssignment::with(['laporan.zona', 'petugas', 'admin'])->get();
+        return view('Admin.pages.penugasan.penugasan', compact('penugasans'));
     }
 
     // 5. Menampilkan form buat penugasan baru
     public function createPenugasan()
     {
-        $laporans = WasteReport::where('status_laporan', 'dilaporkan')->with('zona')->get();
-        $petugass = User::where('peran', 'Petugas')->get();
-        return view('Admin.pages.penugasan.tambah', compact('laporans', 'petugass'));
+        $waste_reports = WasteReport::where('status_laporan', 'dilaporkan')->with('zona')->get();
+        $petugas_list = User::where('peran', 'Petugas')->get();
+        return view('Admin.pages.penugasan.tambah', compact('waste_reports', 'petugas_list'));
     }
 
     // 6. Menyimpan data penugasan ke database
@@ -86,7 +87,7 @@ class ReportAssignmentController extends Controller
         ReportAssignment::create([
             'id_laporan' => $request->id_laporan,
             'id_petugas' => $request->id_petugas,
-            'id_admin' => Auth::id(),
+            'id_admin' => Auth::id() ?? 1,
             'waktu_ditugaskan' => now(),
             'catatan_admin' => $request->catatan_admin,
             'estimasi_selesai' => $request->estimasi_selesai,

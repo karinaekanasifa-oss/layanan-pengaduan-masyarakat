@@ -39,20 +39,22 @@ Route::prefix('admin')->group(function () {
         Route::get('/', [ReportAssignmentController::class, 'indexPenugasan'])->name('penugasan.index');
         Route::get('/tambah', [ReportAssignmentController::class, 'createPenugasan'])->name('penugasan.create');
         Route::post('/store', [ReportAssignmentController::class, 'storePenugasan'])->name('penugasan.store');
+
+        // ---> TAMBAHKAN BARIS INI <---
+        Route::get('/update/{id}', [ReportAssignmentController::class, 'editPenugasan'])->name('penugasan.edit');
+        Route::put('/update/{id}', [ReportAssignmentController::class, 'updatePenugasan'])->name('penugasan.update');
+
         Route::delete('/delete/{id}', [ReportAssignmentController::class, 'destroyPenugasan'])->name('penugasan.destroy');
     });
 
-    // 5. Pengguna (Admin, Petugas, Masyarakat)
    // 5. Pengguna (Admin, Petugas, Masyarakat)
     Route::prefix('pengguna')->group(function () {
         Route::get('/', [PenggunaController::class, 'index'])->name('pengguna.index');
         Route::get('/tambah', [PenggunaController::class, 'create'])->name('pengguna.create');
         Route::post('/store', [PenggunaController::class, 'store'])->name('pengguna.store');
         Route::get('/detail/{id}', [PenggunaController::class, 'show'])->name('pengguna.show');
-
         // Diubah menjadi pengguna.edit agar cocok dengan tombol di blade
         Route::get('/update/{id}', [PenggunaController::class, 'edit'])->name('pengguna.edit');
-
         Route::put('/update/{id}', [PenggunaController::class, 'update'])->name('pengguna.update');
         Route::delete('/delete/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
     });
