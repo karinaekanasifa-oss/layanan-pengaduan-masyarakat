@@ -15,10 +15,10 @@
             <div class="card border-light shadow-sm p-4">
                 <h5 class="card-title mb-4">Form Edit Zona</h5>
 
-                <form id="formUpdate" action="{{ route('zona.update', $zone->id_zona) }}" method="POST">
+                <form id="formUpdate" action="{{ route('zona.update', $zona->id_zona) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    <input type="hidden" id="zonaId" value="{{ $zone->id_zona }}">
+                    <input type="hidden" id="zonaId" value="{{ $zona->id_zona }}">
 
                     <!-- Nama Zona -->
                     <div class="mb-3">
@@ -26,7 +26,7 @@
                             Nama Zona / Kecamatan <span class="text-danger">*</span>
                         </label>
                         <input type="text" class="form-control-custom" id="nama_zona" name="nama_zona"
-                            value="{{ $zone->nama_zona }}" placeholder="Contoh: Zona Utara" required>
+                            value="{{ $zona->nama_zona }}" placeholder="Contoh: Zona Utara" required>
                     </div>
 
                     <!-- Deskripsi Wilayah -->
@@ -35,7 +35,7 @@
                             Deskripsi Wilayah
                         </label>
                         <textarea class="form-control-custom" id="deskripsi_wilayah" name="deskripsi_wilayah" rows="3"
-                            placeholder="Masukkan keterangan cakupan wilayah...">{{ $zone->deskripsi_wilayah }}</textarea>
+                            placeholder="Masukkan keterangan cakupan wilayah...">{{ $zona->deskripsi_wilayah }}</textarea>
                     </div>
 
                     <div class="d-flex gap-2">

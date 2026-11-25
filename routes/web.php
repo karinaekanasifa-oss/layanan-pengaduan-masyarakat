@@ -4,11 +4,19 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ZoneController;
 use App\Http\Controllers\Admin\ReportAssignmentController;
 use App\Http\Controllers\Admin\PenggunaController;
+use App\Http\Controllers\Petugas\PetugasController;
+use App\Http\Controllers\Masyarakat\MasyarakatController; // Tambahkan namespace controller masyarakat
 use Illuminate\Support\Facades\Route;
 
-// Halaman utama langsung diarahkan ke dashboard admin untuk sementara
-Route::get('/', function () {
-    return redirect()->route('admin.dashboard');
+// Halaman utama (/) langsung menampilkan Beranda / Landing Page Masyarakat
+Route::get('/', [MasyarakatController::class, 'index'])->name('masyarakat.dashboard');
+
+// ================= AREA MASYARAKAT (VISITOR & WARGA) =================
+Route::prefix('masyarakat')->name('masyarakat.')->group(function () {
+    Route::get('/dashboard', [MasyarakatController::class, 'index'])->name('dashboard');
+    Route::get('/pengaduan', [MasyarakatController::class, 'create'])->name('pengaduan');
+    Route::post('/pengaduan/store', [MasyarakatController::class, 'store'])->name('store');
+    Route::get('/riwayat', [MasyarakatController::class, 'riwayat'])->name('riwayat');
 });
 
 // ================= AREA ADMIN =================
@@ -39,24 +47,33 @@ Route::prefix('admin')->group(function () {
         Route::get('/', [ReportAssignmentController::class, 'indexPenugasan'])->name('penugasan.index');
         Route::get('/tambah', [ReportAssignmentController::class, 'createPenugasan'])->name('penugasan.create');
         Route::post('/store', [ReportAssignmentController::class, 'storePenugasan'])->name('penugasan.store');
-
-        // ---> TAMBAHKAN BARIS INI <---
         Route::get('/update/{id}', [ReportAssignmentController::class, 'editPenugasan'])->name('penugasan.edit');
         Route::put('/update/{id}', [ReportAssignmentController::class, 'updatePenugasan'])->name('penugasan.update');
-
         Route::delete('/delete/{id}', [ReportAssignmentController::class, 'destroyPenugasan'])->name('penugasan.destroy');
     });
 
-   // 5. Pengguna (Admin, Petugas, Masyarakat)
+    // 5. Pengguna (Admin, Petugas, Masyarakat)
     Route::prefix('pengguna')->group(function () {
         Route::get('/', [PenggunaController::class, 'index'])->name('pengguna.index');
         Route::get('/tambah', [PenggunaController::class, 'create'])->name('pengguna.create');
         Route::post('/store', [PenggunaController::class, 'store'])->name('pengguna.store');
         Route::get('/detail/{id}', [PenggunaController::class, 'show'])->name('pengguna.show');
-        // Diubah menjadi pengguna.edit agar cocok dengan tombol di blade
         Route::get('/update/{id}', [PenggunaController::class, 'edit'])->name('pengguna.edit');
         Route::put('/update/{id}', [PenggunaController::class, 'update'])->name('pengguna.update');
         Route::delete('/delete/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
+    });
+
+});
+
+// ================= AREA PETUGAS =================
+Route::prefix('petugas')->group(function () {
+    Route::get('/dashboard', [PetugasController::class, 'index'])->name('petugas.dashboard');
+
+    // 2. Daftar Tugas & Update Progres
+    Route::prefix('penugasan')->group(function () {
+        Route::get('/', [PetugasController::class, 'penugasan'])->name('petugas.penugasan');
+        Route::get('/detail/{id}', [PetugasController::class, 'detailPenugasan'])->name('petugas.penugasan.detail');
+        Route::put('/update/{id}', [PetugasController::class, 'updateProgres'])->name('petugas.penugasan.update');
     });
 
 });
