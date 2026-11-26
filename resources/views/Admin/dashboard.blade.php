@@ -130,9 +130,11 @@
                   <tbody>
                     @forelse($laporanTerbaru ?? [] as $laporan)
                       <tr>
-                        <td>{{ $laporan->pelapor->name ?? 'Masyarakat' }}</td>
+                        <!-- Diperbaiki dari name menjadi nama_lengkap sesuai kolom database User -->
+                        <td>{{ $laporan->pelapor->nama_lengkap ?? 'Masyarakat' }}</td>
                         <td>{{ $laporan->zona->nama_zona ?? '-' }}</td>
-                        <td>{{ Str::limit($laporan->deskripsi ?? '-', 40) }}</td>
+                        <!-- Diperbaiki dari deskripsi menjadi ulasan_warga atau lokasi -->
+                        <td>{{ Str::limit($laporan->ulasan_warga ?? $laporan->lokasi ?? '-', 40) }}</td>
                         <td>{{ $laporan->dibuat_pada ?? $laporan->created_at }}</td>
                       </tr>
                     @empty
@@ -174,4 +176,5 @@
 
     </div>
     <!-- END: Main Layout Grid -->
+
 @endsection

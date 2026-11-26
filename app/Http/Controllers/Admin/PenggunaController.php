@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Zone; // <--- 1. Tambahkan ini di bagian atas untuk memanggil model Zone
+use App\Models\Zone;
 use Illuminate\Support\Facades\Hash;
 
 class PenggunaController extends Controller
@@ -13,15 +13,19 @@ class PenggunaController extends Controller
     // Menampilkan daftar seluruh pengguna
     public function index()
     {
-        $penggunas = User::all();
+        $penggunas = User::where('peran', '!=', 'Admin')->paginate(5);
+
+        // Memaksa penulisan link pagination menggunakan Bootstrap 5 murni
+        $penggunas->appends(request()->query());
+
         return view('Admin.pages.pengguna.pengguna', compact('penggunas'));
     }
 
     // Menampilkan form tambah pengguna
     public function create()
     {
-        $zones = Zone::all(); // <--- 2. Ambil semua data zona dari database
-        return view('Admin.pages.pengguna.tambah', compact('zones')); // <--- 3. Kirim data zones ke view
+        $zones = Zone::all();
+        return view('Admin.pages.pengguna.tambah', compact('zones'));
     }
 
     // Menyimpan pengguna baru ke database
@@ -33,13 +37,13 @@ class PenggunaController extends Controller
             'password' => 'required|min:6',
             'peran' => 'required|in:Admin,Petugas,Masyarakat',
             'no_telepon' => 'nullable|string|max:15',
-            'id_zona' => 'nullable|exists:zones,id_zona', // Tambahkan validasi zona jika perlu
+            'id_zona' => 'nullable|exists:zones,id_zona',
         ]);
 
         User::create([
             'nama_lengkap' => $request->nama_lengkap,
             'email' => $request->email,
-            'password' => Hash::make($request->password), // Enkripsi password
+            'password' => Hash::make($request->password),
             'peran' => $request->peran,
             'no_telepon' => $request->no_telepon,
             'id_zona' => $request->id_zona,

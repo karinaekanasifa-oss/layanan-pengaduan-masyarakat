@@ -37,7 +37,8 @@
             </a>
           </li>
           <li class="sidebar-menu-item">
-            <a href="{{ route('laporan.index') }}" class="sidebar-menu-link {{ request()->routeIs('laporan*') ? 'active' : '' }}" title="Verifikasi Laporan">
+            <!-- Berikan pengecekan spesifik agar tidak mencakup sub-route rekapitulasi -->
+            <a href="{{ route('laporan.index') }}" class="sidebar-menu-link {{ request()->routeIs('laporan.index') || (request()->routeIs('laporan.show*')) ? 'active' : '' }}" title="Verifikasi Laporan">
               <i class="bi bi-file-earmark-text"></i>
               <span>Laporan Sampah</span>
             </a>
@@ -46,6 +47,13 @@
             <a href="{{ route('penugasan.index') }}" class="sidebar-menu-link {{ request()->routeIs('penugasan*') ? 'active' : '' }}" title="Penugasan Petugas">
               <i class="bi bi-clipboard-check"></i>
               <span>Penugasan Laporan</span>
+            </a>
+          </li>
+          <!-- Menu Rekapitulasi Laporan -->
+          <li class="sidebar-menu-item">
+            <a href="{{ route('laporan.rekapitulasi') }}" class="sidebar-menu-link {{ request()->routeIs('laporan.rekapitulasi') ? 'active' : '' }}" title="Rekapitulasi Laporan">
+              <i class="bi bi-file-earmark-bar-graph"></i>
+              <span>Rekapitulasi Laporan</span>
             </a>
           </li>
         </ul>
@@ -57,8 +65,8 @@
       <img src="{{ asset('template-admin-petugas/assets/images/avatar.png') }}" alt="Administrator" class="sidebar-profile-img"
         onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop'">
       <div class="sidebar-profile-info">
-        <div class="sidebar-profile-name">Admin Dinas</div>
-        <div class="sidebar-profile-email">admin@sampah.com</div>
+        <div class="sidebar-profile-name">{{ Auth::user()->nama_lengkap ?? 'Admin Dinas' }}</div>
+        <div class="sidebar-profile-email">{{ Auth::user()->email ?? 'admin@sampah.com' }}</div>
       </div>
     </div>
   </div>

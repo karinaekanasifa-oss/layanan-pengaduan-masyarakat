@@ -11,7 +11,7 @@ use App\Models\Zone;
 
 class MasyarakatController extends Controller
 {
-    // Menampilkan Beranda / Dashboard Publik Masyarakat
+    // Menampilkan Dashboard Masyarakat
     public function index()
     {
         return view('Masyarakat.dashboard');
@@ -42,7 +42,6 @@ class MasyarakatController extends Controller
 
         // Simpan ke database menggunakan WasteReport
         WasteReport::create([
-            // 'id_pelapor' => Auth::id(), // Diaktifkan nanti saat modul login dibuat
             'id_zona' => $request->id_zona,
             'lokasi' => $request->lokasi,
             'jenis_sampah' => $request->jenis_sampah,

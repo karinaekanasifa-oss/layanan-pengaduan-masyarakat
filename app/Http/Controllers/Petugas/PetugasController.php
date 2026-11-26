@@ -15,7 +15,7 @@ class PetugasController extends Controller
     // 1. Halaman Dashboard Petugas
     public function index()
     {
-        // Ambil ID petugas yang sedang login (gunakan Auth::id() atau fallback 2 jika testing)
+        // Ambil ID petugas yang sedang login menggunakan id sesuai role nya
         $petugasId = Auth::id() ?? 2;
 
         // Hitung statistik tugas untuk petugas tersebut

@@ -36,9 +36,10 @@
                     </tr>
                 </thead>
                 <tbody id="daftarPengguna">
-                    @foreach ($penggunas as $item)
+                    @forelse ($penggunas as $item)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
+                            <!-- Nomor urut menyesuaikan halaman pagination -->
+                            <td>{{ $penggunas->firstItem() + $loop->index }}</td>
                             <td>
                                 <div class="table-user-cell">
                                     <img src="{{ asset('template-admin-petugas/assets/images/avatar.png') }}" alt="Avatar" class="table-user-avatar">
@@ -75,9 +76,26 @@
                                 </div>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">Belum ada data pengguna.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- Tombol Navigasi Halaman & Informasi (Rapi Berdampingan Tanpa Tailwind) -->
+        <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <!-- Bagian teks "Showing..." bawaan Bootstrap 5 pagination -->
+            <div class="text-muted" style="font-size: 14px;">
+                Menampilkan data ke {{ $penggunas->firstItem() }} sampai {{ $penggunas->lastItem() }} dari total {{ $penggunas->total() }} data
+            </div>
+
+            <!-- Bagian tombol nomor halaman -->
+            <div>
+                {{ $penggunas->links('pagination::bootstrap-5') }}
+            </div>
         </div>
     </div>
     <!-- END: Basic Table Card Container -->

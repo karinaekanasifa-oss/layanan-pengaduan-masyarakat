@@ -27,7 +27,7 @@ class ReportAssignment extends Model
         return $this->belongsTo(WasteReport::class, 'id_laporan', 'id_laporan');
     }
 
-    // TAMBAHKAN INI: Alias relasi agar 'laporan' terbaca oleh controller
+    // Alias relasi agar 'laporan' terbaca oleh controller
     public function laporan()
     {
         return $this->belongsTo(WasteReport::class, 'id_laporan', 'id_laporan');

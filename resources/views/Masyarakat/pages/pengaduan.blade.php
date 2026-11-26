@@ -1,80 +1,69 @@
 @extends('Masyarakat.index')
 
 @section('content')
-    <!-- Header Section for Page -->
-    <header class="masthead-sub py-5"
-        style="background-color: #212529; padding-top: 10rem !important; padding-bottom: 5rem !important;">
-        <div class="container text-center text-white">
-            <h2 class="section-heading text-uppercase">Formulir Pengaduan Sampah</h2>
-            <h3 class="section-subheading text-muted text-white-50">Sampaikan aduanmu secara akurat agar segera
-                ditindaklanjuti petugas kebersihan.</h3>
+    <header class="py-5 text-white" style="background: linear-gradient(135deg, #157347 0%, #198754 100%); padding-top: 9rem !important; padding-bottom: 4rem !important;">
+        <div class="container text-center">
+            <h2 class="section-heading text-uppercase fw-bold">Formulir Pengaduan Sampah</h2>
+            <p class="text-white-50 mb-0">Sampaikan aduan lokasi penumpukan sampah agar segera ditindaklanjuti petugas zona terkait.</p>
         </div>
     </header>
 
-    <!-- Main Content Section: Form Pengaduan -->
-    <section class="page-section" id="form-pengaduan">
+    <section class="page-section py-5">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8">
-                    <div class="card border-0 shadow-sm p-4 p-md-5">
+                    <div class="card border-0 shadow rounded-4 p-4 p-md-5">
 
-                        <!-- Form Pengaduan (Nanti action diarahkan ke Route store) -->
-                        <form id="formPengaduan" action="#" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('masyarakat.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
-                            <!-- Pilih Zona -->
+                            <!-- Pilih Zona Wilayah (Relasi ke tabel Zones) -->
                             <div class="mb-4">
-                                <label for="id_zona" class="form-label fw-bold text-uppercase small">Pilih Zona / Wilayah
-                                    <span class="text-danger">*</span></label>
-                                <select class="form-select py-3" id="id_zona" name="id_zona" required>
+                                <label for="id_zona" class="form-label fw-bold text-uppercase small text-success">Pilih Zona / Wilayah <span class="text-danger">*</span></label>
+                                <select class="form-select py-3 rounded-3" id="id_zona" name="id_zona" required>
                                     <option value="">-- Pilih Zona Wilayah --</option>
-                                    <!-- Looping data zona dari database nantinya -->
+                                    @foreach($zones as $zone)
+                                        <option value="{{ $zone->id_zona }}">{{ $zone->nama_zona }} - {{ $zone->deskripsi_wilayah }}</option>
+                                    @endforeach
                                 </select>
                             </div>
 
-                            <!-- Lokasi -->
+                            <!-- Lokasi Detail -->
                             <div class="mb-4">
-                                <label for="lokasi" class="form-label fw-bold text-uppercase small">Lokasi / Alamat
-                                    Lengkap <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control py-3" id="lokasi" name="lokasi"
-                                    placeholder="Contoh: Jl. Melati No. 12" required>
+                                <label for="lokasi" class="form-label fw-bold text-uppercase small text-success">Lokasi / Alamat Lengkap & Patokan <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control py-3 rounded-3" id="lokasi" name="lokasi" placeholder="Contoh: Jl. Mawar No. 10, sebelah pos ronda" required>
                             </div>
 
-                            <!-- Jenis Sampah -->
+                            <!-- Jenis Sampah (Sesuai ERD: organik, b3, campuran) -->
                             <div class="mb-4">
-                                <label for="jenis_sampah" class="form-label fw-bold text-uppercase small">Jenis Sampah <span
-                                        class="text-danger">*</span></label>
-                                <select class="form-select py-3" id="jenis_sampah" name="jenis_sampah" required>
+                                <label for="jenis_sampah" class="form-label fw-bold text-uppercase small text-success">Jenis Sampah <span class="text-danger">*</span></label>
+                                <select class="form-select py-3 rounded-3" id="jenis_sampah" name="jenis_sampah" required>
                                     <option value="">-- Pilih Jenis Sampah --</option>
-                                    <option value="organik">Organik</option>
-                                    <option value="anorganik">Anorganik</option>
-                                    <option value="campuran">Campuran</option>
+                                    <option value="organik">Organik (Sisa makanan, daun, dll)</option>
+                                    <option value="b3">B3 (Bahan Berbahaya & Beracun / Medis)</option>
+                                    <option value="campuran">Campuran (Limbah liar berbagai jenis)</option>
                                 </select>
                             </div>
 
-                            <!-- Input File Foto (Sesuai gaya simling storage) -->
+                            <!-- Upload Foto Kondisi Awal (Simling / Storage) -->
                             <div class="mb-4">
-                                <label for="foto_kondisi_awal" class="form-label fw-bold text-uppercase small">Foto Kondisi
-                                    Awal Sampah <span class="text-danger">*</span></label>
-                                <input type="file" class="form-control py-3" id="foto_kondisi_awal"
-                                    name="foto_kondisi_awal" required>
+                                <label for="foto_kondisi_awal" class="form-label fw-bold text-uppercase small text-success">Foto Kondisi Awal Sampah <span class="text-danger">*</span></label>
+                                <input type="file" class="form-control py-3 rounded-3" id="foto_kondisi_awal" name="foto_kondisi_awal" accept="image/*" required>
+                                <div class="form-text">Format yang diizinkan: JPG, JPEG, PNG.</div>
                             </div>
 
-                            <!-- Ulasan -->
+                            <!-- Ulasan Warga (Sesuai ERD: ulasan_warga) -->
                             <div class="mb-4">
-                                <label for="ulasan_warga" class="form-label fw-bold text-uppercase small">Ulasan /
-                                    Keterangan Tambahan</label>
-                                <textarea class="form-control" id="ulasan_warga" name="ulasan_warga" rows="4"
-                                    placeholder="Keterangan tambahan..."></textarea>
+                                <label for="ulasan_warga" class="form-label fw-bold text-uppercase small text-success">Catatan / Ulasan Warga</label>
+                                <textarea class="form-control rounded-3" id="ulasan_warga" name="ulasan_warga" rows="4" placeholder="Tambahkan keterangan deskripsi atau akses jalan jika diperlukan..."></textarea>
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center mt-5">
-                                <a href="{{ url('/masyarakat/dashboard') }}"
-                                    class="btn btn-secondary text-uppercase px-4 py-3">Kembali</a>
-                                <button type="submit" class="btn btn-primary text-uppercase px-5 py-3">Kirim
-                                    Laporan</button>
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+                                <a href="{{ route('masyarakat.dashboard') }}" class="btn btn-outline-secondary text-uppercase px-4 py-3 rounded-pill">Kembali</a>
+                                <button type="submit" class="btn btn-success text-uppercase px-5 py-3 rounded-pill fw-bold shadow-sm">Kirim Laporan</button>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>

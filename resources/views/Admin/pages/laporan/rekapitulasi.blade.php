@@ -1,6 +1,23 @@
 @extends('Admin.index')
 
 @section('content')
+   <!-- CSS Khusus untuk Menyembunyikan Navbar dan Sidebar Saat Diprint -->
+    <style>
+        @media print {
+            /* Sembunyikan navbar kustom, sidebar, header halaman, tombol print, dan form filter */
+            header.navbar-custom,
+            .sidebar-wrapper,
+            .page-header.d-print-none,
+            .card.border-light.shadow-sm,
+            nav {
+                display: none !important;
+            }
+            body {
+                background-color: white !important;
+            }
+        }
+    </style>
+
     <!-- START: Page Header Banner -->
     <div class="page-header d-print-none">
         <div>
@@ -86,10 +103,11 @@
 
     <!-- Tanda Tangan untuk Cetak (Muncul saat print) -->
     <div class="row mt-5 d-none d-print-flex justify-content-end text-center">
-        <div class="col-4">
-            <p>Mengetahui,<br><strong>Kepala Dinas Kebersihan</strong></p>
-            <br><br><br>
-            <p><strong>( ______________________ )</strong><br>NIP. ....................................</p>
+        <div class="col-4 ms-auto">
+            <p class="mb-5">Mengetahui,<br><strong>Kepala Dinas Kebersihan</strong></p>
+            <br><br>
+            <p class="mb-0"><strong>( ________________________________ )</strong></p>
+            <p class="mt-1">NIP. ....................................................</p>
         </div>
     </div>
 @endsection

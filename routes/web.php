@@ -5,26 +5,39 @@ use App\Http\Controllers\Admin\ZoneController;
 use App\Http\Controllers\Admin\ReportAssignmentController;
 use App\Http\Controllers\Admin\PenggunaController;
 use App\Http\Controllers\Petugas\PetugasController;
-use App\Http\Controllers\Masyarakat\MasyarakatController; // Tambahkan namespace controller masyarakat
+use App\Http\Controllers\Masyarakat\MasyarakatController;
+use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 
-// Halaman utama (/) langsung menampilkan Beranda / Landing Page Masyarakat
+// ================= RUTE AUTENTIKASI (LOGIN & REGISTER) =================
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+});
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+
+// Halaman utama (Publik / Bisa dilihat tanpa login)
 Route::get('/', [MasyarakatController::class, 'index'])->name('masyarakat.dashboard');
 
-// ================= AREA MASYARAKAT (VISITOR & WARGA) =================
-Route::prefix('masyarakat')->name('masyarakat.')->group(function () {
+// AREA MASYARAKAT (Dashboard publik, tapi Pengaduan & Riwayat wajib login & role Masyarakat)
+Route::prefix('masyarakat')->name('masyarakat.group.')->group(function () {
     Route::get('/dashboard', [MasyarakatController::class, 'index'])->name('dashboard');
+});
+
+Route::middleware(['auth', 'role:Masyarakat'])->prefix('masyarakat')->name('masyarakat.')->group(function () {
     Route::get('/pengaduan', [MasyarakatController::class, 'create'])->name('pengaduan');
     Route::post('/pengaduan/store', [MasyarakatController::class, 'store'])->name('store');
     Route::get('/riwayat', [MasyarakatController::class, 'riwayat'])->name('riwayat');
+    Route::get('/riwayat/detail/{id}', [MasyarakatController::class, 'show'])->name('show'); // Tambahan rute detail
 });
 
-// ================= AREA ADMIN =================
-Route::prefix('admin')->group(function () {
-
+// AREA ADMIN (Wajib login & role Admin)
+Route::middleware(['auth', 'role:Admin'])->prefix('admin')->group(function () {
     // 1. Dashboard Admin
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-
     // 2. Zona Wilayah
     Route::prefix('zona')->group(function () {
         Route::get('/', [ZoneController::class, 'index'])->name('zona.index');
@@ -38,6 +51,7 @@ Route::prefix('admin')->group(function () {
     // 3. Laporan Masuk dari Masyarakat
     Route::prefix('laporan')->group(function () {
         Route::get('/', [ReportAssignmentController::class, 'indexLaporan'])->name('laporan.index');
+        Route::get('/rekapitulasi', [ReportAssignmentController::class, 'rekapitulasi'])->name('laporan.rekapitulasi');
         Route::get('/detail/{id}', [ReportAssignmentController::class, 'showLaporan'])->name('laporan.show');
         Route::post('/store', [ReportAssignmentController::class, 'storeLaporan'])->name('laporan.store');
     });
@@ -65,11 +79,9 @@ Route::prefix('admin')->group(function () {
 
 });
 
-// ================= AREA PETUGAS =================
-Route::prefix('petugas')->group(function () {
+// AREA PETUGAS (Wajib login & role Petugas)
+Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->group(function () {
     Route::get('/dashboard', [PetugasController::class, 'index'])->name('petugas.dashboard');
-
-    // 2. Daftar Tugas & Update Progres
     Route::prefix('penugasan')->group(function () {
         Route::get('/', [PetugasController::class, 'penugasan'])->name('petugas.penugasan');
         Route::get('/detail/{id}', [PetugasController::class, 'detailPenugasan'])->name('petugas.penugasan.detail');

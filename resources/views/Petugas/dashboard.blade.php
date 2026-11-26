@@ -100,3 +100,44 @@
     </div>
     <!-- END: Recent Tasks Section -->
 @endsection
+@auth
+<!-- Modal Pop-up Profil Petugas -->
+<div class="modal fade" id="modalProfilPetugas" tabindex="-1" aria-labelledby="modalProfilPetugasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4 overflow-hidden">
+            <div class="modal-header bg-success text-white border-0">
+                <h5 class="modal-title fw-bold" id="modalProfilPetugasLabel">
+                    <i class="bi bi-person-circle me-2"></i> Profil Petugas Lapangan
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2 shadow-sm" style="width: 75px; height: 75px;">
+                        <i class="bi bi-person fs-1"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0 text-dark">{{ Auth::user()->nama_lengkap }}</h5>
+                    <span class="badge bg-success rounded-pill px-3 mt-1">{{ Auth::user()->peran }}</span>
+                </div>
+                <ul class="list-group list-group-flush rounded-3 border">
+                    <li class="list-group-item d-flex justify-content-between py-3">
+                        <span class="text-muted small fw-bold text-uppercase">Email</span>
+                        <span class="fw-semibold text-dark">{{ Auth::user()->email }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between py-3">
+                        <span class="text-muted small fw-bold text-uppercase">No. Telepon</span>
+                        <span class="fw-semibold text-dark">{{ Auth::user()->no_telepon ?? '-' }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between py-3">
+                        <span class="text-muted small fw-bold text-uppercase">Zona Penugasan</span>
+                        <span class="fw-semibold text-dark">{{ Auth::user()->zona->nama_zona ?? 'Semua Zona / Umum' }}</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endauth

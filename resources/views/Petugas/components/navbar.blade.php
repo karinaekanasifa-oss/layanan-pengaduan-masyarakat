@@ -36,12 +36,13 @@
           </button>
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-profile" aria-labelledby="profile-dropdown">
             <li class="dropdown-header">Panel Petugas Lapangan</li>
-            <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Profil Saya</a></li>
+            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalProfilPetugas"><i class="bi bi-person"></i> Profil Saya</a></li>
             <li>
               <hr class="dropdown-divider">
             </li>
             <li>
-              <form action="#" method="POST">
+              <!-- Form Logout menggunakan method POST dan rute logout yang sudah ada -->
+              <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> Logout</button>
               </form>

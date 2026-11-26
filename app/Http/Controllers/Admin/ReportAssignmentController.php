@@ -12,11 +12,51 @@ use Illuminate\Support\Str;
 
 class ReportAssignmentController extends Controller
 {
-    // 1. Menampilkan daftar seluruh laporan masuk dari masyarakat
-    public function indexLaporan()
+    // 1. Menampilkan daftar seluruh laporan masuk dari masyarakat dengan pagination & filter 3 bulan
+    public function indexLaporan(Request $request)
     {
-        $waste_reports = WasteReport::with(['zona', 'pelapor'])->latest('dibuat_pada')->get();
+        $query = WasteReport::with(['zona', 'pelapor'])->latest('dibuat_pada');
+
+        // Filter berdasarkan pilihan 3 bulanan (Kuartal)
+        if ($request->filled('filter_triwulan')) {
+            switch ($request->filter_triwulan) {
+                case 'Q1': // Januari - Maret
+                    $query->whereMonth('dibuat_pada', '>=', 1)
+                        ->whereMonth('dibuat_pada', '<=', 3);
+                    break;
+                case 'Q2': // April - Juni
+                    $query->whereMonth('dibuat_pada', '>=', 4)
+                        ->whereMonth('dibuat_pada', '<=', 6);
+                    break;
+                case 'Q3': // Juli - September
+                    $query->whereMonth('dibuat_pada', '>=', 7)
+                        ->whereMonth('dibuat_pada', '<=', 9);
+                    break;
+                case 'Q4': // Oktober - Desember
+                    $query->whereMonth('dibuat_pada', '>=', 10)
+                        ->whereMonth('dibuat_pada', '<=', 12);
+                    break;
+            }
+        }
+
+        $waste_reports = $query->paginate(5)->withQueryString();
+
         return view('Admin.pages.laporan.laporan', compact('waste_reports'));
+    }
+
+    // Menampilkan halaman rekapitulasi laporan
+    public function rekapitulasi(Request $request)
+    {
+        $query = WasteReport::with(['zona', 'pelapor'])->latest('dibuat_pada');
+
+        // Filter berdasarkan rentang tanggal jika dipilih
+        if ($request->filled('tanggal_mulai') && $request->filled('tanggal_selesai')) {
+            $query->whereBetween('dibuat_pada', [$request->tanggal_mulai, $request->tanggal_selesai]);
+        }
+
+        $waste_reports = $query->get();
+
+        return view('Admin.pages.laporan.rekapitulasi', compact('waste_reports'));
     }
 
     // 2. Menampilkan detail laporan & foto kondisi awal
@@ -26,7 +66,7 @@ class ReportAssignmentController extends Controller
         return view('Admin.pages.laporan.show', compact('laporan'));
     }
 
-    // 3. Menyimpan laporan baru (Jika admin/warga menginput laporan beserta UPLOAD GAMBAR & SIMLINK)
+    // 3. Menyimpan laporan baru (Jika admin/warga menginput laporan beserta UPLOAD GAMBAR)
     public function storeLaporan(Request $request)
     {
         $request->validate([
@@ -37,7 +77,7 @@ class ReportAssignmentController extends Controller
             'ulasan_warga' => 'nullable|string',
         ]);
 
-        // Proses penyimpanan gambar menggunakan symlink (disk public)
+        // Proses penyimpanan gambar menggunakan symlink
         $slug = Str::slug($request->lokasi, '-');
         $filename = time() . '-' . $slug . '.' . $request->file('foto_kondisi_awal')->getClientOriginalExtension();
 
@@ -49,7 +89,7 @@ class ReportAssignmentController extends Controller
             'id_zona' => $request->id_zona,
             'jenis_sampah' => $request->jenis_sampah,
             'lokasi' => $request->lokasi,
-            'foto_kondisi_awal' => $path, // path tersimpan di database
+            'foto_kondisi_awal' => $path,
             'ulasan_warga' => $request->ulasan_warga,
             'status_laporan' => 'dilaporkan',
             'dibuat_pada' => now(),

@@ -11,7 +11,7 @@ use App\Models\Zone;
 
 class MasyarakatController extends Controller
 {
-    // Menampilkan Beranda / Dashboard Publik Masyarakat
+    // Menampilkan Dashboard Masyarakat
     public function index()
     {
         return view('Masyarakat.dashboard');
@@ -24,7 +24,7 @@ class MasyarakatController extends Controller
         return view('Masyarakat.pages.pengaduan', compact('zones'));
     }
 
-    // Menyimpan data pengaduan baru dengan simling storeAs
+  // Menyimpan data pengaduan baru dengan simling storeAs
     public function store(Request $request)
     {
         $request->validate([
@@ -40,15 +40,15 @@ class MasyarakatController extends Controller
         $filename = $slug . '-' . time() . '.' . $request->file('foto_kondisi_awal')->getClientOriginalExtension();
         $path = $request->file('foto_kondisi_awal')->storeAs('folder-pengaduan', $filename, 'public');
 
-        // Simpan ke database menggunakan WasteReport (sesuai kolom di model)
+        // Simpan ke database menggunakan WasteReport
         WasteReport::create([
-            // 'id_pelapor' => Auth::id(), // Diaktifkan nanti saat modul login dibuat
+            'id_pelapor' => auth()->id(),
             'id_zona' => $request->id_zona,
             'lokasi' => $request->lokasi,
             'jenis_sampah' => $request->jenis_sampah,
             'foto_kondisi_awal' => $path,
             'ulasan_warga' => $request->ulasan_warga,
-            'status_laporan' => 'menunggu', // Disesuaikan dengan kolom di model WasteReport
+            'status_laporan' => 'dilaporkan',// Menggunakan nilai 'ditugaskan' yang sesuai dengan Enum database
         ]);
 
         return redirect()->route('masyarakat.riwayat')->with('success', 'Pengaduan berhasil dikirim!');
@@ -59,5 +59,15 @@ class MasyarakatController extends Controller
     {
         $pengaduans = WasteReport::with('zona')->get();
         return view('Masyarakat.pages.riwayat', compact('pengaduans'));
+    }
+
+    public function show($id)
+    {
+        $pengaduan = WasteReport::with(['zona'])
+                        ->where('id_laporan', $id)
+                        ->where('id_pelapor', auth()->id())
+                        ->firstOrFail();
+
+        return view('Masyarakat.pages.detail', compact('pengaduan'));
     }
 }

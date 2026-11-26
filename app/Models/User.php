@@ -29,10 +29,16 @@ class User extends Authenticatable
 
     protected $primaryKey = 'id_pengguna';
 
-    // Tambahkan fungsi relasi ini di bawahnya:
+    // Relasi ke tabel Zona
     public function zona()
     {
         return $this->belongsTo(Zone::class, 'id_zona', 'id_zona');
+    }
+
+    // Tambahan relasi: Seorang pengguna (masyarakat) dapat mengirimkan banyak laporan sampah (WasteReport)
+    public function wasteReports()
+    {
+        return $this->hasMany(WasteReport::class, 'id_pelapor', 'id_pengguna');
     }
 
     /**
