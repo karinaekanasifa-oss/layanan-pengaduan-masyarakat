@@ -1,7 +1,7 @@
 <div class="sidebar-wrapper" id="sidebar">
     <!-- Brand Logo / Identity -->
     <a href="{{ route('admin.dashboard') }}" class="sidebar-brand">
-      <i class="bi bi-asterisk"></i>
+      <i class="bi-archive"></i>
       <span>Pengaduan Sampah</span>
     </a>
 
@@ -37,7 +37,7 @@
             </a>
           </li>
           <li class="sidebar-menu-item">
-            <!-- Berikan pengecekan spesifik agar tidak mencakup sub-route rekapitulasi -->
+            <!-- pengecekan agar tidak mencakup sub-route rekapitulasi -->
             <a href="{{ route('laporan.index') }}" class="sidebar-menu-link {{ request()->routeIs('laporan.index') || (request()->routeIs('laporan.show*')) ? 'active' : '' }}" title="Verifikasi Laporan">
               <i class="bi bi-file-earmark-text"></i>
               <span>Laporan Sampah</span>

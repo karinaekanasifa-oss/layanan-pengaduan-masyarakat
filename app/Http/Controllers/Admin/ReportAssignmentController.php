@@ -12,12 +12,12 @@ use Illuminate\Support\Str;
 
 class ReportAssignmentController extends Controller
 {
-    // 1. Menampilkan daftar seluruh laporan masuk dari masyarakat dengan pagination & filter 3 bulan
+    // 1. Menampilkan daftar seluruh laporan masuk dari masyarakat
     public function indexLaporan(Request $request)
     {
         $query = WasteReport::with(['zona', 'pelapor'])->latest('dibuat_pada');
 
-        // Filter berdasarkan pilihan 3 bulanan (Kuartal)
+        // Filter berdasarkan pilihan 3 bulan (Kuartal)
         if ($request->filled('filter_triwulan')) {
             switch ($request->filter_triwulan) {
                 case 'Q1': // Januari - Maret
@@ -49,7 +49,7 @@ class ReportAssignmentController extends Controller
     {
         $query = WasteReport::with(['zona', 'pelapor'])->latest('dibuat_pada');
 
-        // Filter berdasarkan rentang tanggal jika dipilih
+        // Filter berdasarkan rentang tanggal
         if ($request->filled('tanggal_mulai') && $request->filled('tanggal_selesai')) {
             $query->whereBetween('dibuat_pada', [$request->tanggal_mulai, $request->tanggal_selesai]);
         }
@@ -66,7 +66,7 @@ class ReportAssignmentController extends Controller
         return view('Admin.pages.laporan.show', compact('laporan'));
     }
 
-    // 3. Menyimpan laporan baru (Jika admin/warga menginput laporan beserta UPLOAD GAMBAR)
+    // 3. Menyimpan laporan baru (Jika admin/warga menginput laporan)
     public function storeLaporan(Request $request)
     {
         $request->validate([
@@ -80,7 +80,6 @@ class ReportAssignmentController extends Controller
         // Proses penyimpanan gambar menggunakan symlink
         $slug = Str::slug($request->lokasi, '-');
         $filename = time() . '-' . $slug . '.' . $request->file('foto_kondisi_awal')->getClientOriginalExtension();
-
         // Disimpan ke folder storage/app/public/folder-laporan
         $path = $request->file('foto_kondisi_awal')->storeAs('folder-laporan', $filename, 'public');
 
@@ -101,7 +100,6 @@ class ReportAssignmentController extends Controller
     // 4. Menampilkan daftar riwayat penugasan lapangan ke petugas
     public function indexPenugasan()
     {
-        // Diubah dari $penugasan menjadi $penugasans agar cocok dengan file Blade
         $penugasans = ReportAssignment::with(['laporan.zona', 'petugas', 'admin'])->get();
         return view('Admin.pages.penugasan.penugasan', compact('penugasans'));
     }

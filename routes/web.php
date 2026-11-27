@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ZoneController;
 use App\Http\Controllers\Admin\ReportAssignmentController;
@@ -9,7 +10,7 @@ use App\Http\Controllers\Masyarakat\MasyarakatController;
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 
-// ================= RUTE AUTENTIKASI (LOGIN & REGISTER) =================
+// AREA AUTENTIKASI UNTUK LOGIN DAN REGISTRASI
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
@@ -22,7 +23,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 // Halaman utama (Publik / Bisa dilihat tanpa login)
 Route::get('/', [MasyarakatController::class, 'index'])->name('masyarakat.dashboard');
 
-// AREA MASYARAKAT (Dashboard publik, tapi Pengaduan & Riwayat wajib login & role Masyarakat)
+// AREA MASYARAKAT
 Route::prefix('masyarakat')->name('masyarakat.group.')->group(function () {
     Route::get('/dashboard', [MasyarakatController::class, 'index'])->name('dashboard');
 });
@@ -34,11 +35,9 @@ Route::middleware(['auth', 'role:Masyarakat'])->prefix('masyarakat')->name('masy
     Route::get('/riwayat/detail/{id}', [MasyarakatController::class, 'show'])->name('show'); // Tambahan rute detail
 });
 
-// AREA ADMIN (Wajib login & role Admin)
+// AREA ADMIN
 Route::middleware(['auth', 'role:Admin'])->prefix('admin')->group(function () {
-    // 1. Dashboard Admin
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-    // 2. Zona Wilayah
     Route::prefix('zona')->group(function () {
         Route::get('/', [ZoneController::class, 'index'])->name('zona.index');
         Route::get('/tambah', [ZoneController::class, 'create'])->name('zona.create');
@@ -79,13 +78,12 @@ Route::middleware(['auth', 'role:Admin'])->prefix('admin')->group(function () {
 
 });
 
-// AREA PETUGAS (Wajib login & role Petugas)
+// AREA PETUGAS
 Route::middleware(['auth', 'role:Petugas'])->prefix('petugas')->group(function () {
-    Route::get('/dashboard', [PetugasController::class, 'index'])->name('petugas.dashboard');
+    Route::get('/dashboard', [PetugasDashboardController::class, 'index'])->name('petugas.dashboard');
     Route::prefix('penugasan')->group(function () {
         Route::get('/', [PetugasController::class, 'penugasan'])->name('petugas.penugasan');
         Route::get('/detail/{id}', [PetugasController::class, 'detailPenugasan'])->name('petugas.penugasan.detail');
         Route::put('/update/{id}', [PetugasController::class, 'updateProgres'])->name('petugas.penugasan.update');
     });
-
 });

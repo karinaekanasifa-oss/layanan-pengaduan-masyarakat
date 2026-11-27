@@ -12,7 +12,7 @@
     <!-- END: Page Header -->
 
     <div class="row g-4">
-        <!-- Kolom Kiri: Informasi Detail Laporan -->
+        <!-- Informasi Detail Laporan -->
         <div class="col-12 col-lg-6">
             <div class="card border-light shadow-sm p-4 rounded-4 h-100">
                 <h5 class="card-title fw-bold mb-4">Informasi Laporan Sampah</h5>
@@ -31,8 +31,7 @@
                     </li>
                     <li class="list-group-item d-flex justify-content-between py-3">
                         <span class="text-muted">Jenis Sampah:</span>
-                        <span><span
-                                class="badge bg-warning text-dark">{{ ucfirst($penugasan->laporan->jenis_sampah ?? '-') }}</span></span>
+                        <span><span class="badge bg-warning text-dark">{{ ucfirst($penugasan->laporan->jenis_sampah ?? '-') }}</span></span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between py-3">
                         <span class="text-muted">Ulasan / Keterangan:</span>
@@ -51,15 +50,36 @@
                         </div>
                     </li>
                 </ul>
+
+                <!-- Riwayat Pengerjaan / Bukti Sebelumnya (Jika Ada) -->
+                @if($penugasan->laporan->cleanupLogs->count() > 0)
+                    <div class="mt-4 pt-3 border-top">
+                        <h6 class="fw-bold mb-3"><i class="bi bi-clock-history me-1"></i> Riwayat Pengerjaan Sebelumnya</h6>
+                        @foreach($penugasan->laporan->cleanupLogs as $log)
+                            <div class="p-3 mb-3 bg-light rounded-3 border">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="badge bg-secondary">{{ ucwords(str_replace('_', ' ', $log->status_perubahan)) }}</span>
+                                    <small class="text-muted">{{ $log->waktu_pembaruan }}</small>
+                                </div>
+                                <p class="mb-2 small text-dark"><strong>Catatan:</strong> {{ $log->catatan_petugas ?? '-' }}</p>
+                                @if($log->foto_bukti)
+                                    <div>
+                                        <small class="text-muted d-block mb-1">Foto Bukti:</small>
+                                        <img src="{{ asset('storage/' . $log->foto_bukti) }}" alt="Foto Bukti" style="width: 120px; height: 90px; object-fit: cover; border-radius: 8px;">
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
 
-        <!-- Kolom Kanan: Form Update Status & Upload Foto Bukti -->
+        <!-- Form Update Status & Upload Foto Bukti -->
         <div class="col-12 col-lg-6">
             <div class="card border-light shadow-sm p-4 rounded-4 h-100">
                 <h5 class="card-title fw-bold mb-4">Form Perbarui Progres</h5>
 
-                <!-- Gunakan method POST dengan enctype untuk memastikan file gambar terkirim sempurna -->
                 <form action="{{ route('petugas.penugasan.update', $penugasan->id_penugasan) }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
@@ -67,25 +87,23 @@
 
                     <!-- Pilih Status Perubahan -->
                     <div class="mb-3">
-                        <label for="status_perubahan" class="form-label fw-semibold">Status Penanganan <span
-                                class="text-danger">*</span></label>
+                        <label for="status_perubahan" class="form-label fw-semibold">Status Penanganan <span class="text-danger">*</span></label>
+                        @php
+                            $logTerakhir = $penugasan->laporan->cleanupLogs->first();
+                            $statusSaatIni = $logTerakhir ? $logTerakhir->status_perubahan : ($penugasan->laporan->status_laporan ?? 'ditugaskan');
+                        @endphp
                         <select class="form-select" id="status_perubahan" name="status_perubahan" required>
-                            <option value="ditugaskan"
-                                {{ $penugasan->laporan->status_laporan == 'ditugaskan' ? 'selected' : '' }}>Ditugaskan
-                            </option>
-                            <option value="sedang_dibersihkan"
-                                {{ $penugasan->laporan->status_laporan == 'sedang_dibersihkan' ? 'selected' : '' }}>Sedang
-                                Dibersihkan</option>
-                            <option value="selesai"
-                                {{ $penugasan->laporan->status_laporan == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                            <option value="ditugaskan" {{ $statusSaatIni == 'ditugaskan' ? 'selected' : '' }}>Ditugaskan</option>
+                            <option value="sedang_dibersihkan" {{ $statusSaatIni == 'sedang_dibersihkan' ? 'selected' : '' }}>Sedang Dibersihkan</option>
+                            <option value="selesai" {{ $statusSaatIni == 'selesai' ? 'selected' : '' }}>Selesai</option>
                         </select>
                     </div>
 
                     <!-- Upload Foto Bukti Setelah Dibersihkan -->
                     <div class="mb-3">
-                        <label for="foto_bukti" class="form-label fw-semibold">Foto Bukti Setelah Dibersihkan</label>
+                        <label for="foto_bukti" class="form-label fw-semibold">Foto Bukti Baru / Pengerjaan</label>
                         <input type="file" class="form-control" id="foto_bukti" name="foto_bukti" accept="image/*">
-                        <small class="text-muted">Unggah foto kondisi lokasi setelah selesai dibersihkan.</small>
+                        <small class="text-muted">Unggah foto kondisi lokasi terbaru sesuai progres.</small>
                     </div>
 
                     <!-- Catatan Petugas -->

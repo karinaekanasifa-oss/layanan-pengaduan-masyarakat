@@ -4,7 +4,7 @@
             <i class="bi bi-asterisk"></i> Pengaduan Sampah
         </span>
         <span class="footer-separator">|</span>
-        <span class="footer-copy">&copy; 2026 Portal Petugas Kebersihan &bull; Template by <a href="https://www.themewagon.com/" target="_blank">ThemeWagon</a></span>
+        <span class="footer-copy">&copy; 2026 Portal Petugas Kebersihan &bull;</span>
     </div>
     <div class="footer-right">
         <ul class="footer-links">

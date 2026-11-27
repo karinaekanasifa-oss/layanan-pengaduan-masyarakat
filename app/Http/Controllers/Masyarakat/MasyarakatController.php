@@ -24,7 +24,7 @@ class MasyarakatController extends Controller
         return view('Masyarakat.pages.pengaduan', compact('zones'));
     }
 
-  // Menyimpan data pengaduan baru dengan simling storeAs
+  // Menyimpan data pengaduan baru
     public function store(Request $request)
     {
         $request->validate([
@@ -35,7 +35,7 @@ class MasyarakatController extends Controller
             'ulasan_warga' => 'nullable|string',
         ]);
 
-        // Proses simpan file dengan slug & simling
+
         $slug = Str::slug($request->lokasi, '-');
         $filename = $slug . '-' . time() . '.' . $request->file('foto_kondisi_awal')->getClientOriginalExtension();
         $path = $request->file('foto_kondisi_awal')->storeAs('folder-pengaduan', $filename, 'public');
@@ -48,7 +48,7 @@ class MasyarakatController extends Controller
             'jenis_sampah' => $request->jenis_sampah,
             'foto_kondisi_awal' => $path,
             'ulasan_warga' => $request->ulasan_warga,
-            'status_laporan' => 'dilaporkan',// Menggunakan nilai 'ditugaskan' yang sesuai dengan Enum database
+            'status_laporan' => 'dilaporkan',
         ]);
 
         return redirect()->route('masyarakat.riwayat')->with('success', 'Pengaduan berhasil dikirim!');

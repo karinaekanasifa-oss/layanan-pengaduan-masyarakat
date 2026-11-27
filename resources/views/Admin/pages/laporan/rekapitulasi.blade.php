@@ -1,10 +1,8 @@
 @extends('Admin.index')
 
 @section('content')
-   <!-- CSS Khusus untuk Menyembunyikan Navbar dan Sidebar Saat Diprint -->
     <style>
         @media print {
-            /* Sembunyikan navbar kustom, sidebar, header halaman, tombol print, dan form filter */
             header.navbar-custom,
             .sidebar-wrapper,
             .page-header.d-print-none,

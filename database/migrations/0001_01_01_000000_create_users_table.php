@@ -12,10 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            // Ubah id() yang tadinya bawaan laravel menjadi id_pengguna sesuai ERD
+            // Ubah id() yang tadinya bawaan laravel menjadi id_pengguna
            $table->id('id_pengguna');
-
-            // Kolom tambahan sesuai ERD Pengaduan Sampah
             $table->string('nama_lengkap');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
@@ -23,7 +21,7 @@ return new class extends Migration
             $table->string('no_telepon', 20)->nullable();
             $table->enum('peran', ['Masyarakat', 'Petugas', 'Admin'])->default('Masyarakat');
 
-            // Relasi ke tabel zones (Pastikan tabel zones sudah dibuat di atas migration ini)
+            // Relasi ke tabel zones 
             $table->unsignedBigInteger('id_zona')->nullable();
             $table->foreign('id_zona')->references('id_zona')->on('zones')->onDelete('set null');
 

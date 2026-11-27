@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id('id_penugasan');
             $table->unsignedBigInteger('id_laporan');
             $table->unsignedBigInteger('id_petugas');
-            $table->unsignedBigInteger('id_admin'); // Sesuai ERD untuk admin penugasan
+            $table->unsignedBigInteger('id_admin');
             $table->timestamp('waktu_ditugaskan')->useCurrent();
             $table->text('catatan_admin')->nullable();
             $table->timestamp('estimasi_selesai')->nullable();

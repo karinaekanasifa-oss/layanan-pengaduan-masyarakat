@@ -85,9 +85,8 @@
             </table>
         </div>
 
-        <!-- Tombol Navigasi Halaman & Informasi (Rapi Berdampingan Tanpa Tailwind) -->
+        <!-- Tombol Navigasi Halaman & Informasi -->
         <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <!-- Bagian teks "Showing..." bawaan Bootstrap 5 pagination -->
             <div class="text-muted" style="font-size: 14px;">
                 Menampilkan data ke {{ $penggunas->firstItem() }} sampai {{ $penggunas->lastItem() }} dari total {{ $penggunas->total() }} data
             </div>

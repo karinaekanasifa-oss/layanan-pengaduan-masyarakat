@@ -58,7 +58,7 @@
         </div>
     </section>
 
-    <!-- Alur Layanan Sesuai Soal & ERD -->
+    <!-- Alur Layanan -->
     <section class="page-section py-5" id="services">
         <div class="container py-4">
             <div class="text-center mb-5">
@@ -97,7 +97,7 @@
         </div>
     </section>
 
-    <!-- Kategori Jenis Sampah (Sesuai ERD: organik, b3, campuran) -->
+    <!-- Kategori Jenis Sampah -->
     <section class="page-section bg-light py-5" id="kategori">
         <div class="container py-4">
             <div class="text-center mb-5">

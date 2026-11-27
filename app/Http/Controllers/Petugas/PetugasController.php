@@ -15,23 +15,23 @@ class PetugasController extends Controller
     // 1. Halaman Dashboard Petugas
     public function index()
     {
-        // Ambil ID petugas yang sedang login menggunakan id sesuai role nya
+        // Ambil ID petugas yang sedang login
         $petugasId = Auth::id() ?? 2;
 
-        // Hitung statistik tugas untuk petugas tersebut
+        // Hitung statistik tugas berdasarkan status laporan ('ditugaskan', 'dibersihkan')
         $tugasBaru = ReportAssignment::where('id_petugas', $petugasId)
             ->whereHas('laporan', function($q) {
                 $q->where('status_laporan', 'ditugaskan');
             })->count();
 
-        $sedangDikerjakan = ReportAssignment::where('id_petugas', $petugasId)
+        $sedangDibersihkan = ReportAssignment::where('id_petugas', $petugasId)
             ->whereHas('laporan', function($q) {
-                $q->where('status_laporan', 'sedang_dibersihkan');
+                $q->where('status_laporan', 'dibersihkan');
             })->count();
 
         $selesai = ReportAssignment::where('id_petugas', $petugasId)
             ->whereHas('laporan', function($q) {
-                $q->where('status_laporan', 'selesai');
+                $q->where('status_laporan', 'dibersihkan');
             })->count();
 
         // Ambil daftar tugas terbaru
@@ -41,32 +41,69 @@ class PetugasController extends Controller
             ->take(5)
             ->get();
 
-        return view('Petugas.dashboard', compact('tugasBaru', 'sedangDikerjakan', 'selesai', 'recentTasks'));
+        return view('Petugas.dashboard', compact('tugasBaru', 'sedangDibersihkan', 'selesai', 'recentTasks'));
     }
 
     // 2. Halaman Daftar Tugas Lapangan Saya
-    public function penugasan()
+    public function penugasan(Request $request)
     {
         $petugasId = Auth::id() ?? 2;
 
-        // Ambil seluruh tugas penugasan untuk petugas yang login
-        $penugasans = ReportAssignment::with(['laporan', 'laporan.zona'])
-            ->where('id_petugas', $petugasId)
-            ->get();
+        $query = ReportAssignment::with(['laporan.zona', 'laporan.cleanupLogs' => function($q) {
+            $q->latest('waktu_pembaruan');
+        }])->where('id_petugas', $petugasId);
+
+        // Filter berdasarkan pilihan triwulan (Q1 - Q4)
+        if ($request->filled('filter_triwulan')) {
+            switch ($request->filter_triwulan) {
+                case 'Q1': // Januari - Maret
+                    $query->whereHas('laporan', function($q) {
+                        $q->whereMonth('dibuat_pada', '>=', 1)
+                          ->whereMonth('dibuat_pada', '<=', 3);
+                    });
+                    break;
+                case 'Q2': // April - Juni
+                    $query->whereHas('laporan', function($q) {
+                        $q->whereMonth('dibuat_pada', '>=', 4)
+                          ->whereMonth('dibuat_pada', '<=', 6);
+                    });
+                    break;
+                case 'Q3': // Juli - September
+                    $query->whereHas('laporan', function($q) {
+                        $q->whereMonth('dibuat_pada', '>=', 7)
+                          ->whereMonth('dibuat_pada', '<=', 9);
+                    });
+                    break;
+                case 'Q4': // Oktober - Desember
+                    $query->whereHas('laporan', function($q) {
+                        $q->whereMonth('dibuat_pada', '>=', 10)
+                          ->whereMonth('dibuat_pada', '<=', 12);
+                    });
+                    break;
+            }
+        }
+
+        $penugasans = $query->get();
 
         return view('Petugas.pages.penugasan.penugasan', compact('penugasans'));
     }
 
-    // 3. Halaman Detail & Form Update Progres Penugasan
+   // 3. Halaman Detail & Form Update Progres Penugasan
     public function detailPenugasan($id)
     {
-        // Ambil data penugasan berdasarkan ID
-        $penugasan = ReportAssignment::with(['laporan', 'laporan.pelapor', 'laporan.zona'])->findOrFail($id);
+        // Ambil data penugasan beserta riwayat log pembersihannya
+        $penugasan = ReportAssignment::with([
+            'laporan.pelapor',
+            'laporan.zona',
+            'laporan.cleanupLogs' => function($q) {
+                $q->latest('waktu_pembaruan');
+            }
+        ])->findOrFail($id);
 
         return view('Petugas.pages.penugasan.detail', compact('penugasan'));
     }
 
-    // 4. Proses Simpan Update Status & Upload Foto Bukti (Log Pembersihan)
+   // 4. Proses Simpan Update Status & Upload Foto Bukti (Log Pembersihan)
     public function updateProgres(Request $request, $id)
     {
         $request->validate([
@@ -80,7 +117,6 @@ class PetugasController extends Controller
 
         $fotoPath = null;
         if ($request->hasFile('foto_bukti')) {
-            // Simpan foto ke folder public/storage/bukti-pembersihan
             $fotoPath = $request->file('foto_bukti')->store('bukti-pembersihan', 'public');
         }
 
@@ -94,9 +130,17 @@ class PetugasController extends Controller
             'waktu_pembaruan' => now(),
         ]);
 
-        // Perbarui status utama di tabel laporan sampah (waste_reports)
+        // Petakan ke status utama Waste_Reports ('dilaporkan', 'ditugaskan', 'dibersihkan')
+        // Jika status perubahan adalah 'selesai', maka status utama laporan menjadi 'dibersihkan'
+        $statusUtama = 'ditugaskan';
+        if ($request->status_perubahan == 'sedang_dibersihkan') {
+            $statusUtama = 'ditugaskan'; // atau tetap ikuti alur
+        } elseif ($request->status_perubahan == 'selesai') {
+            $statusUtama = 'dibersihkan';
+        }
+
         $laporan->update([
-            'status_laporan' => $request->status_perubahan
+            'status_laporan' => $statusUtama
         ]);
 
         return redirect()->route('petugas.penugasan')->with('success', 'Progres penanganan berhasil diperbarui!');

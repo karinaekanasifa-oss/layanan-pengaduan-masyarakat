@@ -29,7 +29,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
             $user = Auth::user();
 
-            // Arahkan sesuai peran (role) di ERD
+            // Arahkan sesuai peran (role)
             if ($user->peran === 'Admin') {
                 return redirect()->route('admin.dashboard');
             } elseif ($user->peran === 'Petugas') {
@@ -68,7 +68,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'no_telepon' => $request->no_telepon,
             'id_zona' => $request->id_zona,
-            'peran' => 'Masyarakat', // Otomatis diset sebagai Masyarakat
+            'peran' => 'Masyarakat', 
             'password' => Hash::make($request->password),
         ]);
 

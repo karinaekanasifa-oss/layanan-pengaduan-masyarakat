@@ -1,7 +1,7 @@
 <div class="sidebar-wrapper" id="sidebar">
     <!-- Brand Logo / Identity -->
     <a href="{{ route('petugas.dashboard') }}" class="sidebar-brand">
-      <i class="bi bi-asterisk"></i>
+      <i class="bi bi-trash3-fill"></i>
       <span>Pengaduan Sampah</span>
     </a>
 

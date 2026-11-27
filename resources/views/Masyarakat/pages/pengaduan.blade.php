@@ -34,7 +34,7 @@
                                 <input type="text" class="form-control py-3 rounded-3" id="lokasi" name="lokasi" placeholder="Contoh: Jl. Mawar No. 10, sebelah pos ronda" required>
                             </div>
 
-                            <!-- Jenis Sampah (Sesuai ERD: organik, b3, campuran) -->
+                            <!-- Jenis Sampah -->
                             <div class="mb-4">
                                 <label for="jenis_sampah" class="form-label fw-bold text-uppercase small text-success">Jenis Sampah <span class="text-danger">*</span></label>
                                 <select class="form-select py-3 rounded-3" id="jenis_sampah" name="jenis_sampah" required>
@@ -45,14 +45,14 @@
                                 </select>
                             </div>
 
-                            <!-- Upload Foto Kondisi Awal (Simling / Storage) -->
+                            <!-- Upload Foto Kondisi Awal -->
                             <div class="mb-4">
                                 <label for="foto_kondisi_awal" class="form-label fw-bold text-uppercase small text-success">Foto Kondisi Awal Sampah <span class="text-danger">*</span></label>
                                 <input type="file" class="form-control py-3 rounded-3" id="foto_kondisi_awal" name="foto_kondisi_awal" accept="image/*" required>
                                 <div class="form-text">Format yang diizinkan: JPG, JPEG, PNG.</div>
                             </div>
 
-                            <!-- Ulasan Warga (Sesuai ERD: ulasan_warga) -->
+                            <!-- Ulasan Warga -->
                             <div class="mb-4">
                                 <label for="ulasan_warga" class="form-label fw-bold text-uppercase small text-success">Catatan / Ulasan Warga</label>
                                 <textarea class="form-control rounded-3" id="ulasan_warga" name="ulasan_warga" rows="4" placeholder="Tambahkan keterangan deskripsi atau akses jalan jika diperlukan..."></textarea>

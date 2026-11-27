@@ -13,7 +13,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_laporan');
             $table->unsignedBigInteger('id_petugas');
             $table->enum('status_perubahan', ['ditugaskan', 'sedang_dibersihkan', 'selesai']);
-            $table->string('foto_bukti', 255)->nullable(); // Disesuaikan ala simling (panjang 255)
+            $table->string('foto_bukti', 255)->nullable();
             $table->text('catatan_petugas')->nullable();
             $table->timestamp('waktu_pembaruan')->useCurrent();
             $table->timestamps();

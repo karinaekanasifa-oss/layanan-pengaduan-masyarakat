@@ -11,16 +11,8 @@
         </button>
     </div>
 
-    <!-- Mid navbar: search pill -->
-    <div class="navbar-search-wrapper">
-        <input type="text" class="navbar-search-input" placeholder="Cari data di sistem..." id="main-search">
-        <button class="navbar-search-btn" aria-label="Search">
-            <i class="bi bi-search"></i>
-        </button>
-    </div>
-
     <!-- Right actions -->
-    <div class="navbar-actions">
+    <div class="navbar-actions ms-auto">
         <!-- Fullscreen Toggle -->
         <button class="navbar-action-btn me-1" aria-label="Toggle Fullscreen" id="btn-fullscreen">
             <i class="bi bi-arrows-fullscreen"></i>
@@ -43,7 +35,7 @@
                     <hr class="dropdown-divider">
                 </li>
                 <li>
-                    <!-- Form Logout wajib menggunakan POST dan CSRF Token -->
+                    <!-- Form Logout -->
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i>

@@ -57,7 +57,7 @@
             </div>
         </div>
 
-        <!-- Foto Kondisi Awal & Aksi Verifikasi -->
+        <!-- Foto Kondisi Awal -->
         <div class="col-12 col-lg-4">
             <div class="card border-light shadow-sm p-4 mb-4">
                 <h5 class="card-title mb-3">Foto Kondisi Awal</h5>

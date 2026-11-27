@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('ulasan_warga')->nullable();
             $table->enum('jenis_sampah', ['organik', 'b3', 'campuran']);
             $table->string('lokasi');
-            $table->string('foto_kondisi_awal', 255); // Disesuaikan ala simling (panjang 255)
+            $table->string('foto_kondisi_awal', 255); 
             $table->enum('status_laporan', ['dilaporkan', 'ditugaskan', 'dibersihkan'])->default('dilaporkan');
             $table->timestamp('dibuat_pada')->useCurrent();
             $table->timestamps();

@@ -35,7 +35,6 @@ class User extends Authenticatable
         return $this->belongsTo(Zone::class, 'id_zona', 'id_zona');
     }
 
-    // Tambahan relasi: Seorang pengguna (masyarakat) dapat mengirimkan banyak laporan sampah (WasteReport)
     public function wasteReports()
     {
         return $this->hasMany(WasteReport::class, 'id_pelapor', 'id_pengguna');

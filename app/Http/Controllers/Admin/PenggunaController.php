@@ -15,7 +15,7 @@ class PenggunaController extends Controller
     {
         $penggunas = User::where('peran', '!=', 'Admin')->paginate(5);
 
-        // Memaksa penulisan link pagination menggunakan Bootstrap 5 murni
+        // penulisan link pagination
         $penggunas->appends(request()->query());
 
         return view('Admin.pages.pengguna.pengguna', compact('penggunas'));
@@ -63,7 +63,7 @@ class PenggunaController extends Controller
     public function edit($id)
     {
         $pengguna = User::where('id_pengguna', $id)->firstOrFail();
-        $zones = Zone::all(); // Tambahkan juga ini jika form edit butuh pilihan zona
+        $zones = Zone::all();
         return view('Admin.pages.pengguna.update', compact('pengguna', 'zones'));
     }
 
